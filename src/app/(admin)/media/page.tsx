@@ -89,7 +89,10 @@ export default async function MediaLibrary({
               <small>{date(m.created_at)}</small>
               <h2>{m.text}</h2>
               <details>
-                <summary>Inspect & edit ↗</summary>
+                <summary>
+                  <span>Inspect &amp; edit</span>
+                  <span className="edit-chevron" aria-hidden="true">⌄</span>
+                </summary>
                 <div className="record-meta">
                   <b>Record</b>
                   <code>{m.id}</code>
