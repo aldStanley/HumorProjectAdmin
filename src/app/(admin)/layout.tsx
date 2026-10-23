@@ -17,7 +17,7 @@ export default async function AdminLayout({
             CAPTION LAB<small>CONTROL ROOM</small>
           </span>
         </Link>
-        <div className="nav-label">WORKSPACE</div>
+
         <Navigation />
         <div className="aside-bottom">
           <div className="secure-tag">● SUPERADMIN ACCESS</div>

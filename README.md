@@ -1,6 +1,6 @@
 # Caption Lab — Control Room
 
-Week 6 admin area for the existing Caption Lab Supabase database. Separate GitHub repository and Vercel project: `aldStanley/HumorProjectAdmin` / `humorprojectadmin`.
+Admin area for the existing Caption Lab Supabase database. Separate GitHub repository and Vercel project: `aldStanley/HumorProjectAdmin` / `humorprojectadmin`.
 
 ## Features
 
@@ -18,7 +18,7 @@ The database independently enforces access through `is_superadmin()`, RLS, and g
 ## Setup
 
 1. `npm ci` and copy `.env.example` to `.env.local`. Use the **same** Supabase URL/publishable key as the media app. Set the server-only Gemini key to enable caption generation.
-2. Apply `supabase/migrations/20261017000100_admin.sql` once, after the media app's migrations. Do not rerun its policy creation statements.
+2. Apply `supabase/migrations/20261017000100_admin.sql` once, after the media app's migrations, then `supabase/migrations/20261023000100_domain_model.sql`. Do not rerun migrations already applied.
 3. Bootstrap your own existing Google profile directly in the trusted Supabase SQL Editor:
 
    ```sql
@@ -48,8 +48,25 @@ The database independently enforces access through `is_superadmin()`, RLS, and g
 
 The user reported that last week's feedback was “the project looks awesome,” with no improvement requests. The existing media/rating application's behavior is preserved. This admin area extends the same product with oversight and data management.
 
-Submit the immutable deployment URLs tied to the final commits of both applications, not moving production or branch aliases. See `SUBMISSION.md` for verified deployment details when available.
+The October 23 update is deployed for review only. No assignment submission is made by this update.
 
 ## Verification record — October 17, 2026
 
 The admin migration was applied to the existing connected Supabase project through SQL Editor. `supabase/tests/admin_security.sql` passed there, including transactional CRUD and access checks, with all fixtures rolled back. The production build and 16 local HTTP access tests passed. Real-account bootstrap, exact deployed Google OAuth, and Incognito verification are recorded separately when complete.
+
+## Expanded domain administration — October 23, 2026
+
+The connected Caption Lab database originally had no prompt-chain, model, term, example, or signup-policy tables. The new migration adds these resources with RLS, rather than displaying placeholder data. It seeds the actual existing Gemini provider, model and two-step caption prompts; historical generation logs are not fabricated.
+
+- Read prompt chains and ordered steps; inspect full prompts and related model names.
+- Read/update prompt-chain mix weights and enabled state. Enabled positive weights control weighted routing for new generations **from this admin app**. All-zero/disabled mixes pause generation.
+- Create/read/update/delete terms, generation examples, LLM models and providers, allowed signup domains, and whitelisted email addresses. Referenced records cannot be deleted. No provider credentials are stored in these tables or exposed in the UI.
+- Read generation requests and per-step LLM responses, prompts, timing and usage. New admin generations are logged; older requests and generation in the separate media app do not gain historical logs.
+- Terms and enabled examples provide context to the admin caption step. Examples can be global or tied to a chain.
+- The current runner supports the existing Google Gemini endpoint. Other provider records can be managed, but selecting them for an active chain returns an explicit unsupported-provider error.
+- Manage images separately, including private uploads (JPG/PNG/WebP, maximum 3 MB), description edits, replacement, viewing and deletion. Replacing a photo updates linked captions. Delete published captions in Media library before deleting their image. Storage cleanup failures are reported rather than hidden.
+- Signup lists apply to **new registrations** in the shared Supabase project. With no enabled entries, signup keeps its previous open behavior. Once either list has enabled entries, an exact email match OR a domain match permits signup. Existing accounts and superadmin permissions are unaffected; allowed signup never grants admin access.
+
+Every new page, API and database table keeps the Google + superadmin access requirement. Resource names and writable fields are allowlisted, mutation requests require same-origin checks, logs are read-only, and mix edits cannot change chain IDs.
+
+Validation: `npm run build`; 53 tests in `npm test` against a running production build (47 HTTP access checks and 6 domain/generation tests); `supabase/tests/domain_security.sql` in SQL Editor for rolled-back CRUD, image lifecycle, logs, signup enforcement and anonymous/member/admin permission tests. Both database migrations and transactional domain tests passed on the connected database. The generation tests use mocked provider responses and incur no model charges.

@@ -1207,3 +1207,32 @@ code {
 }
 
 nav a[aria-current="page"] { background: #dce5c7; color: #344e35; }
+
+/* Domain catalog */
+aside .brand, .aside-bottom { flex-shrink: 0; }
+aside nav { overflow-y: auto; margin: 28px -10px 20px 0; padding-right: 8px; }
+.nav-group { display: grid; gap: 3px; }
+.nav-section { padding: 14px 12px 5px; color: #879079; font-size: 8px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; }
+nav a { padding: 10px 12px; font-size: 15px; gap: 10px; }
+nav a span { font-size: 12px; }
+.catalog-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.catalog-card h2 { margin: 22px 0 12px; }
+.catalog-card p { font-size: 12px; }
+.catalog-card:hover { border-color: var(--forest); }
+.page-heading p { max-width: 780px; }
+.domain-editor { min-width: 240px; max-width: 650px; }
+.domain-editor fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 18px; min-width: 0; }
+.check-field { flex-direction: row; align-items: center; gap: 10px; }
+.check-field input { width: 17px; height: 17px; accent-color: var(--forest); }
+.domain-table td { max-width: 360px; overflow-wrap: anywhere; }
+.record-details summary { cursor: pointer; padding: 10px 14px; border: 1px solid #b9ca95; border-radius: 5px; background: var(--green); font-size: 12px; font-weight: 600; white-space: nowrap; }
+.record-details[open] > summary { background: var(--forest); color: var(--paper); border-color: var(--forest); }
+.record-inspector { width: clamp(260px, 35vw, 600px); padding-top: 20px; }
+.record-inspector dl { margin: 20px 0; }
+.record-inspector dl > div { margin-bottom: 17px; }
+.record-inspector dt { font-size: 10px; color: var(--muted); margin-bottom: 5px; }
+.record-inspector dd { margin: 0; font-size: 12px; overflow-wrap: anywhere; }
+.record-inspector pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; background: #f2f4ea; padding: 12px; border-radius: 4px; max-height: 400px; overflow: auto; }
+.record-inspector dd a { text-decoration: underline; }
+@media(max-width:1100px){.catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:800px){aside nav{margin:16px 0 0;padding:0;max-height:180px;} .nav-group{min-width:150px;} .nav-section{padding-top:0;} .catalog-grid{grid-template-columns:1fr;} .record-inspector{width:280px;}}

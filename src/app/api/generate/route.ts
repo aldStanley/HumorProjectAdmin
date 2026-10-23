@@ -1,10 +1,10 @@
 import { authorize, sameOrigin, apiError, AccessError } from "@/lib/access";
-import { generateCaptions } from "@/lib/captions/generate";
+import { runGeneration } from "@/lib/domain/generation";
 import { MAX_IMAGE_BYTES, imageExtension } from "@/lib/captions/validation";
 export const maxDuration = 120;
 export async function POST(request: Request) {
   try {
-    await authorize();
+    const {client} = await authorize();
     sameOrigin(request);
     if (!process.env.GEMINI_API_KEY)
       throw new AccessError(
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     const bytes = Buffer.from(await file.arrayBuffer());
     if (!imageExtension(bytes, file.type))
       throw new AccessError(400, "Invalid photo format.");
-    return Response.json(await generateCaptions(bytes, file.type));
+    return Response.json(await runGeneration(client, bytes, file.type));
   } catch (e) {
     return apiError(e);
   }
