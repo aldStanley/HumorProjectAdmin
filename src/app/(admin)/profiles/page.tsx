@@ -1,5 +1,6 @@
 import { requireAdmin } from "@/lib/access";
 import { pageNumber, date, type Profile } from "@/lib/data";
+import { PromoteButton } from "./promote-button";
 import { Pagination } from "@/app/pagination";
 export default async function Profiles({
   searchParams,
@@ -36,10 +37,10 @@ export default async function Profiles({
           <div className="eyebrow">THE PEOPLE BEHIND THE PUNCHLINES</div>
           <h1>Good company.</h1>
           <p>
-            Browse profiles. Account permissions are managed in the database.
+            Browse profiles and grant trusted Google users superadmin access.
           </p>
         </div>
-        <span className="tag">READ ONLY</span>
+        <span className="tag">ACCESS MANAGEMENT</span>
       </div>
       <form className="filters">
         <label>
@@ -63,6 +64,7 @@ export default async function Profiles({
                 <th>Access</th>
                 <th>Joined</th>
                 <th>Updated</th>
+                <th>Manage access</th>
               </tr>
             </thead>
             <tbody>
@@ -88,6 +90,20 @@ export default async function Profiles({
                   </td>
                   <td>{date(p.created_at)}</td>
                   <td>{date(p.updated_at)}</td>
+                  <td>
+                    {p.is_superadmin ? (
+                      <span className="subtext">Full admin access</span>
+                    ) : (
+                      <PromoteButton
+                        id={p.id}
+                        name={
+                          [p.first_name, p.last_name]
+                            .filter(Boolean)
+                            .join(" ") || "this user"
+                        }
+                      />
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

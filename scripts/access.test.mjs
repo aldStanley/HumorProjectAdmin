@@ -66,9 +66,51 @@ test("login wall is reachable and index-disabled", async () => {
   assert.doesNotMatch(html, /syc2153@|0921stanley@/);
 });
 
-for (const path of ['/images','/manage','/manage/prompt-chains','/manage/prompt-steps','/manage/prompt-mix','/manage/terms','/manage/examples','/manage/models','/manage/providers','/manage/requests','/manage/responses','/manage/signup-domains','/manage/email-whitelist']) {
- test(`new signed-out page ${path} redirects`, async () => { const r=await fetch(`${base}${path}`,{redirect:'manual'});assert.ok([303,307].includes(r.status));assert.equal(new URL(r.headers.get('location'),base).pathname,'/login'); });
+for (const path of [
+  "/images",
+  "/manage",
+  "/manage/prompt-chains",
+  "/manage/prompt-steps",
+  "/manage/prompt-mix",
+  "/manage/terms",
+  "/manage/examples",
+  "/manage/models",
+  "/manage/providers",
+  "/manage/requests",
+  "/manage/responses",
+  "/manage/signup-domains",
+  "/manage/email-whitelist",
+]) {
+  test(`new signed-out page ${path} redirects`, async () => {
+    const r = await fetch(`${base}${path}`, { redirect: "manual" });
+    assert.ok([303, 307].includes(r.status));
+    assert.equal(new URL(r.headers.get("location"), base).pathname, "/login");
+  });
 }
-for (const path of ['/api/images','/api/manage/terms','/api/manage/prompt-mix','/api/manage/providers','/api/manage/responses','/api/manage/not-a-table']) {
- for (const method of ['POST','PATCH','DELETE']) test(`signed-out ${method} ${path} denied`,async()=>{ const r=await fetch(`${base}${path}`,{method,headers:{Origin:base,'Content-Type':'application/json'},body:'{}'});assert.equal(r.status,401); });
+for (const path of [
+  "/api/images",
+  "/api/manage/terms",
+  "/api/manage/prompt-mix",
+  "/api/manage/providers",
+  "/api/manage/responses",
+  "/api/manage/not-a-table",
+]) {
+  for (const method of ["POST", "PATCH", "DELETE"])
+    test(`signed-out ${method} ${path} denied`, async () => {
+      const r = await fetch(`${base}${path}`, {
+        method,
+        headers: { Origin: base, "Content-Type": "application/json" },
+        body: "{}",
+      });
+      assert.equal(r.status, 401);
+    });
 }
+
+test("signed-out superadmin promotion is denied", async () => {
+  const response = await fetch(`${base}/api/profiles/promote`, {
+    method: "POST",
+    headers: { Origin: base, "Content-Type": "application/json" },
+    body: JSON.stringify({ id: "642270ed-d3f0-4b18-8a4a-3f6733c0967b" }),
+  });
+  assert.equal(response.status, 401);
+});

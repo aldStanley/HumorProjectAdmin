@@ -5,7 +5,7 @@ Admin area for the existing Caption Lab Supabase database. Separate GitHub repos
 ## Features
 
 - Live overview: exact profile, caption, vote and voter counts; funny share; 14-day reaction chart in Eastern time; AI/human reaction comparison; top five captions by net score; jury participation and unpublished-image count.
-- Read profiles, search by name and paginate. No profile mutation or role editor.
+- Read profiles, search by name and paginate. Superadmins can promote existing Google profiles through a confirmed action; ordinary profile fields remain read-only.
 - Create media from a photo with generated or imported captions; inspect, edit caption/description/source, and permanently delete with explicit confirmation. Removing a caption removes its board votes; removing the last caption for an image also removes its image row and storage object. Historical jury snapshots remain.
 - Read individual funny/meh votes and sealed jury ballots, with reaction filtering and pagination. Ratings cannot be edited through the admin app.
 
@@ -70,3 +70,11 @@ The connected Caption Lab database originally had no prompt-chain, model, term, 
 Every new page, API and database table keeps the Google + superadmin access requirement. Resource names and writable fields are allowlisted, mutation requests require same-origin checks, logs are read-only, and mix edits cannot change chain IDs.
 
 Validation: `npm run build`; 53 tests in `npm test` against a running production build (47 HTTP access checks and 6 domain/generation tests); `supabase/tests/domain_security.sql` in SQL Editor for rolled-back CRUD, image lifecycle, logs, signup enforcement and anonymous/member/admin permission tests. Both database migrations and transactional domain tests passed on the connected database. The generation tests use mocked provider responses and incur no model charges.
+
+## Shared theme and superadmin promotion — October 24, 2026
+
+The admin panel shares the media app’s charcoal, cream, acid-yellow palette and Arial typography, including login, tables, forms and media controls.
+
+Apply `supabase/migrations/20261024000100_superadmin_promotion.sql` after the previous migrations. People → Make superadmin → Confirm promotion calls an authenticated, same-origin API and a guarded database function. Only a current Google superadmin may promote an existing Google profile. Direct updates to the role field remain prohibited, non-Google accounts are rejected, duplicate promotion is idempotent, and successful grants record the actor, target and timestamp in `admin_role_grants`. This action grants full admin access, including permission to promote others. Role revocation remains an owner operation in Supabase SQL Editor.
+
+Run `supabase/tests/promotion_security.sql` transactionally after the migration to verify anonymous/member denial, blocked direct role updates, Google-account validation, missing targets, admin promotion and audit/idempotency behavior. Fixtures roll back and no real account is promoted during testing.
